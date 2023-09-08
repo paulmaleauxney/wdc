@@ -2,6 +2,9 @@
     var myConnector = tableau.makeConnector();
 
     myConnector.getSchema = function (schemaCallback) {
+        // Log a message to confirm that the connector is working
+        tableau.log("Hello WDC!");
+
         var cols = [
             {
                 id: "id",

@@ -61,4 +61,24 @@
             const connectButton = document.createElement("button");
             connectButton.id = "connect-button";
             connectButton.innerText = "Connect to Data";
-            connectButton.addEventListener
+            connectButton.addEventListener("click", function () {
+                tableau.connectionName = "API Endpoint Data";
+                tableau.submit();
+            });
+
+            document.getElementById("tableau-login").appendChild(connectButton);
+
+            initCallback();
+        };
+
+        // Show the Connect button
+        document.getElementById('tableau-login').style.display = 'block';
+
+        // Create a connection UI when the page loads
+        tableau.initCallback = function () {
+            tableau.connectionName = "API Endpoint Data";
+            tableau.submit();
+        };
+    </script>
+</body>
+</html>

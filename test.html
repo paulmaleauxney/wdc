@@ -1,65 +1,72 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Healthcare Dataset WDC</title>
-    <script src="https://connectors.tableau.com/libs/tableauwdc-2.3.latest.js"></script>
+    <title>API Endpoint WDC</title>
+    <script src="https://connectors.tableau.com/libs/tableauwdc-3.6.latest.js"></script>
+</head>
+<body>
+    <h1>API Endpoint Web Data Connector</h1>
+    <div id="tableau-login" style="display: none;">
+        <button id="connect-button">Connect to Data</button>
+    </div>
+    <div id="data-container" style="display: none;">
+        <!-- Data will be displayed here -->
+        <table id="data-table">
+            <!-- Table headers will be added here -->
+        </table>
+    </div>
+
     <script>
-        // Create a new Web Data Connector instance
-        var myConnector = tableau.makeConnector();
+        // Define the WDC
+        const myConnector = tableau.makeConnector();
 
         // Define the schema for your data
         myConnector.getSchema = function (schemaCallback) {
-            var cols = [
-                { id: "state", dataType: tableau.dataTypeEnum.string },
-                { id: "program_type", dataType: tableau.dataTypeEnum.string },
-                { id: "last_updated", dataType: tableau.dataTypeEnum.datetime },
-                { id: "data_value", dataType: tableau.dataTypeEnum.float }
-            ];
-
-            var tableSchema = {
-                id: "healthcareData",
-                alias: "Healthcare Data",
-                columns: cols
-            };
-
-            schemaCallback([tableSchema]);
+            // Define your schema here based on the API data
+            const schema = [];
+            schemaCallback(schema);
         };
 
-        // Fetch data from the API and populate the table
+        // Fetch and transform data from the API
         myConnector.getData = function (table, doneCallback) {
-            $.getJSON("https://data.healthcare.gov/resource/pwgg-dtft.json", function (data) {
-                var tableData = [];
+            fetch("https://healthdata.gov/resource/g62h-syeh.json")
+                .then(response => response.json())
+                .then(data => {
+                    // Transform and add data to the Tableau table
+                    const tableData = [];
 
-                // Process the API response and format it for Tableau
-                for (var i = 0; i < data.length; i++) {
-                    tableData.push({
-                        "state": data[i].state,
-                        "program_type": data[i].program_type,
-                        "last_updated": new Date(data[i].last_updated),
-                        "data_value": parseFloat(data[i].data_value)
+                    data.forEach(item => {
+                        // Customize this part to match your data structure
+                        const rowData = {
+                            // Map API fields to your schema fields
+                            // Example: 'api_field_name': item.api_field_name
+                        };
+                        tableData.push(rowData);
                     });
-                }
 
-                table.appendRows(tableData);
-                doneCallback();
-            });
+                    table.appendRows(tableData);
+                    doneCallback();
+                })
+                .catch(error => {
+                    console.error(error);
+                    tableau.abortWithError(error.message);
+                });
         };
 
         // Register the connector
         tableau.registerConnector(myConnector);
 
-        // Trigger the connector
-        $(document).ready(function () {
-            $("#submitButton").click(function () {
-                tableau.connectionName = "Healthcare Dataset Connector";
-                tableau.submit();
-            });
-        });
+        // Function to initiate the connection
+        function connectToAPI() {
+            tableau.connectionName = "API Endpoint Data";
+            tableau.submit();
+        }
+
+        // Event listener for the Connect button
+        document.getElementById('connect-button').addEventListener('click', connectToAPI);
+
+        // Show the Connect button
+        document.getElementById('tableau-login').style.display = 'block';
     </script>
-</head>
-<body>
-    <h1>Healthcare Dataset Web Data Connector</h1>
-    <p>Click the button to connect to the healthcare dataset:</p>
-    <button id="submitButton">Connect</button>
 </body>
 </html>

@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>API Endpoint WDC</title>
+    <title>Web Data Connector</title>
     <script src="https://connectors.tableau.com/libs/tableauwdc-3.6.latest.js"></script>
 </head>
 <body>
-    <h1>API Endpoint Web Data Connector</h1>
+    <h1>My Web Data Connector</h1>
     <div id="tableau-login">
         <!-- The connection button will be added here -->
     </div>
@@ -29,28 +29,9 @@
 
         // Fetch and transform data from the API
         myConnector.getData = function (table, doneCallback) {
-            fetch("https://healthdata.gov/resource/g62h-syeh.json")
-                .then(response => response.json())
-                .then(data => {
-                    // Transform and add data to the Tableau table
-                    const tableData = [];
-
-                    data.forEach(item => {
-                        // Customize this part to match your data structure
-                        const rowData = {
-                            // Map API fields to your schema fields
-                            // Example: 'api_field_name': item.api_field_name
-                        };
-                        tableData.push(rowData);
-                    });
-
-                    table.appendRows(tableData);
-                    doneCallback();
-                })
-                .catch(error => {
-                    console.error(error);
-                    tableau.abortWithError(error.message);
-                });
+            // Fetch data from your API and transform it here
+            // Add data to the Tableau table using table.appendRows()
+            doneCallback();
         };
 
         // Register the connector
@@ -62,7 +43,7 @@
             connectButton.id = "connect-button";
             connectButton.innerText = "Connect to Data";
             connectButton.addEventListener("click", function () {
-                tableau.connectionName = "API Endpoint Data";
+                tableau.connectionName = "My Data";
                 tableau.submit();
             });
 
@@ -76,7 +57,7 @@
 
         // Create a connection UI when the page loads
         tableau.initCallback = function () {
-            tableau.connectionName = "API Endpoint Data";
+            tableau.connectionName = "My Data";
             tableau.submit();
         };
     </script>

@@ -41,7 +41,7 @@
             myConnector.getData = function(table, doneCallback) {
                 // Make an AJAX request to fetch data from the API
                 $.ajax({
-                    url: "https://blockstream.info/api/",
+                    url: "https://blockstream.info/api/blocks/tip/hash",
                     dataType: "json",
                     success: function(data) {
                         var tableData = [];

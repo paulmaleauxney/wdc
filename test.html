@@ -2,15 +2,15 @@
 <html>
 
 <head>
-    <title>CDC Vaccination WDC</title>
+    <title>Census Population WDC</title>
     <script src="https://connectors.tableau.com/libs/tableauwdc-4.0.latest.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    <h1>CDC Vaccination Data Connector</h1>
+    <h1>Census Population Data Connector</h1>
     <div id="wdcContainer">
-        <button id="connectButton">Connect to CDC Vaccination Data</button>
+        <button id="connectButton">Connect to Census Population API</button>
     </div>
 
     <script>
@@ -21,19 +21,19 @@
                 // Define your schema here (columns and their data types)
                 var schema = [
                     {
-                        id: "date",
-                        dataType: tableau.dataTypeEnum.date
+                        id: "state",
+                        dataType: tableau.dataTypeEnum.string
                     },
                     {
-                        id: "total_doses_administered",
+                        id: "population",
                         dataType: tableau.dataTypeEnum.int
                     },
                     // Add more columns based on the actual structure of the data
                 ];
 
                 var tableInfo = {
-                    id: "cdcVaccinationData",
-                    alias: "CDC Vaccination Data",
+                    id: "censusPopulationData",
+                    alias: "Census Population Data",
                     columns: schema
                 };
 
@@ -41,19 +41,19 @@
             };
 
             myConnector.getData = function (table, doneCallback) {
-                // Make an AJAX request to fetch data from the CDC vaccination data URL
+                // Make an AJAX request to fetch data from the Census Population API
                 $.ajax({
-                    url: "https://data.cdc.gov/api/views/hfr9-rurv/rows.json?accessType=DOWNLOAD",
+                    url: "https://api.census.gov/data/2021/pep/population",
                     dataType: "json",
                     success: function (data) {
                         var tableData = [];
 
                         // Process and format the API response into tableData
-                        // Assuming the structure of the data is { date: ..., total_doses_administered: ... }
-                        data.data.forEach(function (row) {
+                        // Assuming the structure of the data is { state: ..., population: ... }
+                        data.forEach(function (row) {
                             tableData.push({
-                                date: new Date(row.date), // Assuming 'date' is a string representing a date
-                                total_doses_administered: row.total_doses_administered,
+                                state: row.state,
+                                population: row.population,
                                 // Add more fields based on the actual structure of the data
                             });
                         });
@@ -68,7 +68,7 @@
 
             $(document).ready(function () {
                 $("#connectButton").click(function () {
-                    tableau.connectionName = "CDC Vaccination Data";
+                    tableau.connectionName = "Census Population Data";
                     tableau.submit();
                 });
             });

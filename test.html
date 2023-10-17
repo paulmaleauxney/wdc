@@ -2,15 +2,15 @@
 <html>
 
 <head>
-    <title>Census Population WDC</title>
+    <title>CDC XML Data WDC</title>
     <script src="https://connectors.tableau.com/libs/tableauwdc-4.0.latest.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
-    <h1>Census Population Data Connector</h1>
+    <h1>CDC XML Data Connector</h1>
     <div id="wdcContainer">
-        <button id="connectButton">Connect to Census Population API</button>
+        <button id="connectButton">Connect to CDC XML Data</button>
     </div>
 
     <script>
@@ -21,19 +21,19 @@
                 // Define your schema here (columns and their data types)
                 var schema = [
                     {
-                        id: "state",
+                        id: "some_element",
                         dataType: tableau.dataTypeEnum.string
                     },
                     {
-                        id: "population",
-                        dataType: tableau.dataTypeEnum.int
+                        id: "another_element",
+                        dataType: tableau.dataTypeEnum.float
                     },
                     // Add more columns based on the actual structure of the data
                 ];
 
                 var tableInfo = {
-                    id: "censusPopulationData",
-                    alias: "Census Population Data",
+                    id: "cdcXmlData",
+                    alias: "CDC XML Data",
                     columns: schema
                 };
 
@@ -41,19 +41,21 @@
             };
 
             myConnector.getData = function (table, doneCallback) {
-                // Make an AJAX request to fetch data from the Census Population API
+                // Make an AJAX request to fetch data from the CDC XML file
                 $.ajax({
-                    url: "https://api.census.gov/data/2021/pep/population",
-                    dataType: "json",
+                    url: "https://data.cdc.gov/api/views/g4ie-h725/rows.xml?accessType=DOWNLOAD",
+                    dataType: "xml",
                     success: function (data) {
                         var tableData = [];
 
-                        // Process and format the API response into tableData
-                        // Assuming the structure of the data is { state: ..., population: ... }
-                        data.forEach(function (row) {
+                        // Process and format the XML response into tableData
+                        $(data).find("row").each(function () {
+                            var someElement = $(this).find("some_element").text();
+                            var anotherElement = parseFloat($(this).find("another_element").text());
+
                             tableData.push({
-                                state: row.state,
-                                population: row.population,
+                                some_element: someElement,
+                                another_element: anotherElement,
                                 // Add more fields based on the actual structure of the data
                             });
                         });
@@ -68,7 +70,7 @@
 
             $(document).ready(function () {
                 $("#connectButton").click(function () {
-                    tableau.connectionName = "Census Population Data";
+                    tableau.connectionName = "CDC XML Data";
                     tableau.submit();
                 });
             });
